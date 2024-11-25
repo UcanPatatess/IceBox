@@ -9,6 +9,7 @@ namespace IceBox;
 // So if you change it to SushiRoll, it would be Name "SushiRoll" -> internal static SushiRoll P.
 public sealed class IceBox : IDalamudPlugin
 {
+    public static TaskManager TaskManagerIce;
     private const string CommandName = "/pmycommand";
     public IceBox(IDalamudPluginInterface pluginInterface)
     {
@@ -16,10 +17,11 @@ public sealed class IceBox : IDalamudPlugin
         Service.IceBox = this;
         Service.Configuration = pluginInterface.GetPluginConfig() as Config ?? new Config();
         ECommonsMain.Init(pluginInterface, this);
-        Service.TaskManagerIce = new();
+        TaskManagerIce = new();
         EzConfigGui.Init(new MainWindow().Draw);
         EzConfigGui.WindowSystem.AddWindow(new SettingsWindow());
         EzCmd.Add(CommandName, OnCommand, "Open Interface");
+        Svc.Framework.Update += Tick;
     }
 
     // this is to (what I'm assume) constantly have the plugin check for any actions. 
@@ -34,6 +36,7 @@ public sealed class IceBox : IDalamudPlugin
 
     public void Dispose()
     {
+        Safe(() => Svc.Framework.Update -= Tick);
         ECommonsMain.Dispose();
     }
 

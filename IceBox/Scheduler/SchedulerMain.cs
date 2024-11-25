@@ -10,7 +10,30 @@ internal static unsafe class SchedulerMain
         get => PluginEnabledInternal; // && !IPCSuppressed
         private set => PluginEnabledInternal = value;
     }
-
+    internal static bool IsEnabled // Public property which reacts to true/false
+    {
+        get => PluginEnabled;
+        set
+        {
+            PluginEnabled = value;
+            if (PluginEnabled)
+            {
+                EnablePlugin();
+            }
+            else
+            {
+                DisablePlugin();
+            }
+        }
+    }
+    private static void EnablePlugin()
+    {
+        PluginEnabled = true;
+    }
+    private static void DisablePlugin()
+    {
+        PluginEnabled = false;
+    }
     internal static void Tick()
     {
         if (PluginEnabled)

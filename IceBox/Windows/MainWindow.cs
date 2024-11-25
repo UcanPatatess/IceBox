@@ -1,6 +1,8 @@
 using System.Drawing;
 using System.Reflection;
 using ECommons.SimpleGui;
+using FFXIVClientStructs.FFXIV.Common.Configuration;
+using IceBox.Scheduler.Handlers;
 
 namespace IceBox.Windows;
 
@@ -23,6 +25,7 @@ internal class MainWindow : ConfigWindow, IDisposable
 
     public void Dispose() { }
 
+    bool configValue = false;
     public override void Draw()
     {
         
@@ -40,6 +43,16 @@ internal class MainWindow : ConfigWindow, IDisposable
         ImGui.Spacing();
         if (ImGuiEx.IconButton(FontAwesomeIcon.Wrench, "Settings"))
             EzConfigGui.WindowSystem.Windows.FirstOrDefault(w => w.WindowName == SettingsWindow.WindowName)!.IsOpen ^= true;
+        bool isRunning = SchedulerMain.PluginEnabled;
+
+        if (ImGui.Button(isRunning ? "Stop" : "Start"))
+        {
+            // Toggle the state
+            isRunning = !isRunning;
+
+            // Apply the state to your service
+            SchedulerMain.IsEnabled = isRunning;
+        }
         // ImGui.TextColored(Example.enabled ? new Vector4(0.0f, 1.0f, 0.0f, 1.0f) : new Vector4(1.0f, 0.0f, 0.0f, 1.0f), $"Are we working: {(Example.enabled ? "Yes" : "No")}");
     }
 }
